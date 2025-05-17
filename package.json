@@ -1,0 +1,29 @@
+{
+  "name": "spritesheetgen",
+  "version": "1.0.0",
+  "description": "AI powered spritesheet generator",
+  "homepage": "https://github.com/OskarSan/SpriteSheetGen#readme",
+  "bugs": {
+    "url": "https://github.com/OskarSan/SpriteSheetGen/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OskarSan/SpriteSheetGen.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "npm run dev --prefix client",
+    "server": "npm run start --prefix server",
+    "start": "concurrently \"npm run client\" \"npm run server\""
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "devDependencies": {
+    "tsc-watch": "^6.2.1"
+  }
+}
