@@ -9,16 +9,19 @@ const router : Router = Router();
 
 
 router.post('/prompt', async (req: Request, res: Response) => {
-
-  const client = new OpenAI();
-
+  
+  
+  console.log("Received request:", req.body);
+  const client = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
+  
   const imageFiles = [
       "example_spritesheet.png",
   ];
   //handle image upload with multer
   if (req.body.image) {
-      imageFiles.push("example_dude.png");
-  }
+      imageFiles.push(req.body.image);
+  };
+  console.log("Image files:", imageFiles);
   const images = await Promise.all(
       imageFiles.map(async (file) =>
           await toFile(fs.createReadStream(file), null, {
@@ -26,12 +29,14 @@ router.post('/prompt', async (req: Request, res: Response) => {
           })
       ),
   );
+  
   const rsp = await client.images.edit({
-      model: "gpt-image-1",
-      image: images,
-      prompt: "Create a spritesheet combining the first images poses with the second images character",
+      model: "dall-e-2",
+      image: images[0],
+      prompt: "turn the charater blue and add a hat",
   });
 
+  console.log("Response from OpenAI:", rsp);
   // Save the image to a file
   if (!rsp.data || !Array.isArray(rsp.data) || !rsp.data[0]?.b64_json) {
       res.status(500).json({ error: "No image data returned from OpenAI." });
@@ -39,8 +44,7 @@ router.post('/prompt', async (req: Request, res: Response) => {
     }
   const image_base64 = rsp.data[0].b64_json;
   const image_bytes = Buffer.from(image_base64, "base64");
-  fs.writeFileSync("basket.png", image_bytes);
-
+  fs.writeFileSync("result.png", image_bytes);
 
 });
 
