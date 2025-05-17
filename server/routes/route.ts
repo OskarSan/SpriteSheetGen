@@ -15,12 +15,15 @@ router.post('/prompt', async (req: Request, res: Response) => {
   const client = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
   
   const imageFiles = [
-      "example_spritesheet.png",
+      "example_dude.png",
+      "example_dude_transparent.png"
   ];
   //handle image upload with multer
+  /*
   if (req.body.image) {
       imageFiles.push(req.body.image);
   };
+  */
   console.log("Image files:", imageFiles);
   const images = await Promise.all(
       imageFiles.map(async (file) =>
@@ -29,13 +32,14 @@ router.post('/prompt', async (req: Request, res: Response) => {
           })
       ),
   );
-  
+  console.log(req.body.message)
   const rsp = await client.images.edit({
       model: "dall-e-2",
       image: images[0],
-      prompt: "turn the charater blue and add a hat",
+      mask: images[1],
+      prompt: req.body.message,
   });
-
+  
   console.log("Response from OpenAI:", rsp);
   // Save the image to a file
   if (!rsp.data || !Array.isArray(rsp.data) || !rsp.data[0]?.b64_json) {
@@ -47,8 +51,6 @@ router.post('/prompt', async (req: Request, res: Response) => {
   fs.writeFileSync("result.png", image_bytes);
 
 });
-
-
 
 
 export default router;
