@@ -18,7 +18,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "npm run dev --prefix client",
     "server": "npm run start --prefix server",
-    "start": "concurrently \"npm run client\" \"npm run server\""
+    "start": "concurrently \"npm run client\" \"npm run server\"",
+    "build": "cd client && npm run build"
   },
   "dependencies": {
     "concurrently": "^9.1.2",
