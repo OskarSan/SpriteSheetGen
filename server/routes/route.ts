@@ -14,38 +14,35 @@ router.post('/prompt', upload.single("image"), async (req: Request, res: Respons
   
   console.log("Received request:", req.body);
   const client = new OpenAI({apiKey: process.env.OPENAI_API_KEY});
-  
-    const imageFilePath = req.file?.path;
-    const receivedImageFile = [
-        await toFile(fs.createReadStream(imageFilePath!), null, {
-            type: "image/png",
-        }),
-    ];
-
+ 
   const imageFiles = [
-      "example_dude.png",
-      "example_dude_transparent.png"
+      "example_spritesheet.png",
   ];
-  //handle image upload with multer
-  /*
-  if (req.body.image) {
-      imageFiles.push(req.body.image);
-  };
-  */
-//   console.log("Image files:", imageFiles);
-//   const images = await Promise.all(
-//       imageFiles.map(async (file) =>
-//           await toFile(fs.createReadStream(file), null, {
-//               type: "image/png",
-//           })
-//       ),
-//   );
+
+  const imageFilePath = req.file?.path;
+  const receivedImageFile = [
+      await toFile(fs.createReadStream(imageFilePath!), null, {
+          type: "image/png",
+      }),
+  ];
+ 
+  console.log("Image files:", imageFiles);
+  const images = await Promise.all(
+      imageFiles.map(async (file) =>
+          await toFile(fs.createReadStream(file), null, {
+              type: "image/png",
+          })
+      ),
+  );
+
+  images.push(receivedImageFile[0]);
+
   console.log(req.body.message)
   const rsp = await client.images.edit({
-      model: "dall-e-2",
-      image: receivedImageFile[0],
-      //mask: images[1],
-      prompt: req.body.message,
+      model: "gpt-image-1",
+      //image: receivedImageFile,
+      image: images,
+      prompt: "Create a spritesheet of a character using the style and design from Image 2, and apply the animation poses from Image 1. Notice the colors of the legs in spritesheet (gray is left, black is right) and match their positions in the result",
   });
   
   console.log("Response from OpenAI:", rsp);
@@ -54,9 +51,11 @@ router.post('/prompt', upload.single("image"), async (req: Request, res: Respons
       res.status(500).json({ error: "No image data returned from OpenAI." });
       return;
     }
+  res.status(200).json(rsp.data);
   const image_base64 = rsp.data[0].b64_json;
   const image_bytes = Buffer.from(image_base64, "base64");
   const outputPath = "result.png";
+  
   fs.writeFileSync(outputPath, image_bytes);
     res.json({imageUrl: `http://localhost:3000/${outputPath}`});
 });
