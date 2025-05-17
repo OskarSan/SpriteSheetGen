@@ -10,14 +10,14 @@ function App() {
 
   const handleSend = async () => {
     const formData = new FormData();
-    formData.append('message', input); // Add the text input
+    formData.append('message', input);
     if (uploadedImage) {
-      formData.append('image', uploadedImage); // Add the uploaded image
+      formData.append('image', uploadedImage); 
     }
 
     const res = await fetch('http://localhost:3000/prompt', {
       method: 'POST',
-      body: formData, // Send FormData
+      body: formData, 
     });
     const data = await res.json();
     setResponse(data.choices?.[0]?.message?.content || 'No response');
