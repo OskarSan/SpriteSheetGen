@@ -21,7 +21,8 @@
     "start": "concurrently \"npm run client\" \"npm run server\""
   },
   "dependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "tsc-watch": "^6.2.1"
